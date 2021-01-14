@@ -72,7 +72,7 @@
     </div>
     
     <div id="starfield"></div>
-    <div id="spaceship" class="nosel"><img src="saucer.gif" width="64px" height="64px" id="spaceshipImage" class="nosel"></div>
+    <div id="spaceship" class="nosel"><img src="images/saucer.gif" width="64px" height="64px" id="spaceshipImage" class="nosel"></div>
 </body>
 </html>
 
@@ -228,7 +228,7 @@
             ss = newEl;
             ss.style.top = (Math.random() * sf.offsetHeight) + "px";
             var image = document.getElementById("spaceshipImage");
-            image.src = "saucer.gif";
+            image.src = "images/saucer.gif";
             ss.addEventListener( "click", spaceshipDie, true );
             ss.className = "";
             spaceship = true;
@@ -267,7 +267,7 @@
         ss.className += " paused";
         ss.removeEventListener("click", spaceshipDie, true);
         var image = document.getElementById("spaceshipImage");
-        image.src = "explosion.gif";
+        image.src = "images/explosion.gif";
         console.log( "BOOM!");
     }
     
