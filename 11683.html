@@ -72,13 +72,18 @@
     </div>
     
     <div id="starfield"></div>
-    <div id="spaceship"></div>
+    <div id="spaceship" class="nosel"><img src="saucer.gif" width="64px" height="64px" id="spaceshipImage" class="nosel"></div>
 </body>
 </html>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap');
+    
+    @keyframes ssmove {
+        from { left: -100px; }
+        to { left: 100vw; }
+    }
     
     body {
         font-family: 'Ropa Sans', sans-serif;
@@ -107,6 +112,7 @@
     #mainbox {
         width: 100%;
         display: inline-block;
+        pointer-events: none;
     }
     
     #navbox {
@@ -127,6 +133,7 @@
         left: 0px;
         width: 100vw;
         height: 100vh;
+        pointer-events: none;
     }
     
     .star {
@@ -136,6 +143,37 @@
         top: 0px;
         left: 0px;
     }
+    
+    #spaceship {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        left: -100px;
+        z-index: 2;
+        animation-name: ssmove;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+    }
+    
+    #spaceshipImage {
+        pointer-events: none;
+    }
+    
+    .paused {
+        -webkit-animation-play-state:paused;
+        -moz-animation-play-state:paused;
+        -o-animation-play-state:paused; 
+        animation-play-state:paused;
+    }
+    
+    .nosel {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
     
 </style>
 
@@ -159,17 +197,53 @@
         }
     }
 
+    // stars
     var sf = document.getElementById("starfield");
     sfw = sf.offsetWidth;
     sfh = sf.offsetHeight; 
     var speed = 0.5;
+    var resetTime;
     
+    // spaceship
+    var ss = document.getElementById("spaceship");
+    var timetick = 0;
+    var spaceship = false;
+    var spaceshipIsDead = false;
+    var millis;
+    var timetick;
+    var resetTime;
     
-   initstars();
+    initstars();
    
     var s = document.getElementsByClassName("star");
-    
+
     setInterval( function(){
+        
+        millis = new Date();
+                
+        // randomoly start spaceship
+        if ( Math.random() > 0.995 && spaceship == false ) {
+            var newEl = ss.cloneNode( true );
+            ss.parentNode.replaceChild(newEl, ss);
+            ss = newEl;
+            ss.style.top = (Math.random() * sf.offsetHeight) + "px";
+            var image = document.getElementById("spaceshipImage");
+            image.src = "saucer.gif";
+            ss.addEventListener( "click", spaceshipDie, true );
+            ss.className = "";
+            spaceship = true;
+            spaceshipIsDead = false;
+            resetTime = 10500;
+            timetick = millis;
+        }
+
+        if (spaceship == true && (millis-timetick) > resetTime )
+        {            
+            spaceship = false;
+            
+        }
+                
+        // move stars
         for (i=0;i<s.length;i++) {
             var star = s[i];
             var y = parseInt( star.style.top );
@@ -188,6 +262,14 @@
             star.style.left = x + "px";
         }
     }, 50 );
+    
+    function spaceshipDie() {
+        ss.className += " paused";
+        ss.removeEventListener("click", spaceshipDie, true);
+        var image = document.getElementById("spaceshipImage");
+        image.src = "explosion.gif";
+        console.log( "BOOM!");
+    }
     
     onresize = function() {
         sfw = sf.offsetWidth;
