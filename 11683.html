@@ -72,7 +72,9 @@
     </div>
     
     <div id="starfield"></div>
-    <div id="spaceship" class="nosel"><img src="images/saucer.gif" width="64px" height="64px" id="spaceshipImage" class="nosel"></div>
+    <div id="spaceship" class="nosel">
+        <div id="ssimage" class="nosel"></div>
+    </div>
 </body>
 </html>
 
@@ -83,6 +85,11 @@
     @keyframes ssmove {
         from { left: -100px; }
         to { left: 100vw; }
+    }
+    
+    @keyframes ssanimate {
+        from { background-position:  0% 0%; }
+        to { background-position: 100% 0%;  }
     }
     
     body {
@@ -149,14 +156,24 @@
         width: 64px;
         height: 64px;
         left: -100px;
-        z-index: 2;
+        z-index: -5;
         animation-name: ssmove;
         animation-duration: 10s;
         animation-timing-function: linear;
     }
     
-    #spaceshipImage {
-        pointer-events: none;
+    #ssimage {
+        position:absolute;
+        top: 0px;
+        left: 0px;
+        width: 64px;
+        height: 64px;
+        background-image: url("saucer_sheet.png");
+        background-size: 900%;
+        animation-name: ssanimate;
+        animation-duration: 1s;
+        animation-timing-function: steps(8,end);
+        animation-iteration-count: infinite;
     }
     
     .paused {
@@ -206,6 +223,7 @@
     
     // spaceship
     var ss = document.getElementById("spaceship");
+    var ssimage = document.getElementById("ssimage");
     var timetick = 0;
     var spaceship = false;
     var spaceshipIsDead = false;
@@ -227,9 +245,6 @@
             ss.parentNode.replaceChild(newEl, ss);
             ss = newEl;
             ss.style.top = (Math.random() * sf.offsetHeight) + "px";
-            var image = document.getElementById("spaceshipImage");
-            image.src = "images/saucer.gif";
-            ss.addEventListener( "click", spaceshipDie, true );
             ss.className = "";
             spaceship = true;
             spaceshipIsDead = false;
@@ -237,10 +252,10 @@
             timetick = millis;
         }
 
+        // allow spaceship to reset
         if (spaceship == true && (millis-timetick) > resetTime )
         {            
             spaceship = false;
-            
         }
                 
         // move stars
@@ -262,14 +277,6 @@
             star.style.left = x + "px";
         }
     }, 50 );
-    
-    function spaceshipDie() {
-        ss.className += " paused";
-        ss.removeEventListener("click", spaceshipDie, true);
-        var image = document.getElementById("spaceshipImage");
-        image.src = "images/explosion.gif";
-        console.log( "BOOM!");
-    }
     
     onresize = function() {
         sfw = sf.offsetWidth;
